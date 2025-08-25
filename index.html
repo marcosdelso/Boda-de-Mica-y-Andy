@@ -2,20 +2,22 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Álbum de boda</title>
+  <title>📸 Álbum de boda</title>
   <link rel="stylesheet" href="style.css">
   <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script defer src="app.js"></script>
 </head>
 <body>
-  <h1>📸 Álbum de la boda</h1>
+  <div class="container">
+    <h1>📸 Álbum de la boda</h1>
 
-  <div id="upload-section">
-    <input type="file" id="file-input" accept="image/*" />
-    <button id="upload-btn">Subir foto</button>
+    <div id="upload-section" class="card">
+      <input type="file" id="file-input" accept="image/*" />
+      <button id="upload-btn">Subir foto</button>
+    </div>
+
+    <h2>Fotos subidas</h2>
+    <div id="gallery"></div>
   </div>
-
-  <h2>Fotos subidas</h2>
-  <div id="gallery"></div>
 </body>
 </html>
