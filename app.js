@@ -1,1 +1,1 @@
-console.log("Boda Mica y Andy")
+console.log("Boda de Mica y Andy")
