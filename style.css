@@ -1,14 +1,43 @@
-/* Estilos generales */
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: #f3f4f6;
+  background: #ebe6e1;
   margin: 0;
   padding: 0;
-  display: flex;
-  justify-content: center;
+}
+.hero {
+  position: relative;
+  top: -35px;
+  height: 33vh;
+  background: url("../assets/img/background.jpg") no-repeat center center;
+  background-size: contain;
+  padding: 0;
+  margin: 0;
 }
 
-/* Contenedor principal */
+.hero::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    to bottom,
+    rgba(235, 230, 225, 0) 0%,      /* totalmente transparente al inicio */
+    rgba(235, 230, 225, 0.3) 30%,   /* a la mitad, apenas oscuro */
+    rgba(235, 230, 225, 0.7) 70%,   /* más oscuro */
+    rgb(235, 230, 225) 100%     /* completamente negro al final */
+  );
+}
+
+section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+}
+
 .container {
   max-width: 900px;
   width: 100%;
@@ -16,7 +45,6 @@ body {
   text-align: center;
 }
 
-/* Títulos */
 h1 {
   font-size: 2.2rem;
   margin-bottom: 20px;
@@ -28,7 +56,6 @@ h2 {
   color: #374151;
 }
 
-/* Card del formulario */
 .card {
   background: white;
   padding: 20px;
@@ -64,20 +91,19 @@ button:hover {
   background-color: #1d4ed8;
 }
 
-/* Galería */
+
 #gallery {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 15px;
+  grid-template-columns: 1fr 1fr;
+  gap: 25px;
   margin-top: 20px;
 }
 
-/* Imágenes verticales */
 #gallery img {
   width: 100%;
-  height: 300px; /* altura fija para dar formato "foto vertical" */
-  object-fit: cover; /* recorta la imagen sin deformarla */
-  border-radius: 10px;
+  height: 500px;
+  object-fit: cover;
+  border-radius: 25px;
   box-shadow: 0 4px 8px rgba(0,0,0,0.15);
   transition: transform 0.2s ease-in-out;
 }
