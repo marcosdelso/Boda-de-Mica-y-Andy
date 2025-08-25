@@ -4,27 +4,45 @@
   <meta charset="UTF-8">
   <title>📸 Álbum de boda</title>
   <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Text:ital@0;1&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Playwrite+CA:wght@100..400&display=swap');
+  </style>
   <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script defer src="app.js"></script>
 </head>
 <body>
-    <div class="hero">
-  <h1>Mica y Andy</h1>
-    </div>
-
-    <section>
-  <div class="container">
-    <h1>📸 Álbum de la boda</h1>
-
-    <div id="upload-section" class="card">
-      <input type="file" id="file-input" accept="image/*" />
-      <button id="upload-btn">Subir foto</button>
-    </div>
-
-    <h2>Fotos subidas</h2>
-    <div id="gallery"></div>
+  <div class="hero">
+    <h1>Mica y Andy</h1>
   </div>
-    </section>
 
+  <section>
+    <div class="container">
+
+      <div id="loading">
+        <button id="select-files-btn" class="btn-subir">
+          <i class="material-icons">upload</i> Subir foto(s)
+        </button>
+        <button class="btn-ver"><i class="material-icons">swipe_up</i> Ver Álbum</button>
+      </div>
+
+      <!-- Pop-up para previsualización de archivos -->
+      <div id="popup" class="popup hidden">
+        <div class="popup-content">
+          <h2>Archivos seleccionados</h2>
+          <div id="preview" class="preview"></div>
+          <div class="popup-buttons">
+            <button id="confirm-upload" class="btn-subir">Subir</button>
+            <button id="cancel-upload" class="btn-ver">Cancelar</button>
+          </div>
+        </div>
+      </div>
+
+      <input type="file" id="file-input" accept="image/*" multiple class="hidden">
+
+      <h2>19 fotos</h2>
+      <div id="gallery"></div>
+    </div>
+  </section>
 </body>
 </html>

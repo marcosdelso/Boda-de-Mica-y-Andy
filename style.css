@@ -1,13 +1,84 @@
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: "DM Serif Text", 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background: #ebe6e1;
   margin: 0;
   padding: 0;
 }
+.hidden { display: none; }
+
+.popup {
+  display: none; /* oculto por defecto */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+
+
+.popup-content {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  max-width: 90%;
+  width: 600px;
+  text-align: center;
+}
+
+.preview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 20px 0;
+  justify-content: center;
+}
+
+.preview-item {
+  position: relative;
+  width: 120px;
+  height: 120px;
+}
+
+.preview-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+.preview-item .remove {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  background: red;
+  color: white;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.popup-buttons {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 10px;
+}
+
 .hero {
   position: relative;
   top: -35px;
   height: 33vh;
+  width: 100%;
   background: url("https://bfguzvyklcugedhwaqbg.supabase.co/storage/v1/object/public/wedding-photos/background.jpg") no-repeat center center;
   background-size: contain;
   padding: 0;
@@ -28,6 +99,20 @@ body {
     rgba(235, 230, 225, 0.7) 70%,   /* más oscuro */
     rgb(235, 230, 225) 100%     /* completamente negro al final */
   );
+}
+
+.hero h1 {
+    color: #652e22;
+    font-family: "Playwrite CA", cursive, "Roboto";
+    font-size: 4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    z-index: 10;
+    top: 80%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
 section {
@@ -75,19 +160,53 @@ h2 {
   font-size: 1rem;
 }
 
-button {
-  background-color: #2563eb;
+.btn-subir {
+  background-color: #787D68;
+  font-family: "DM Serif Text";
   color: white;
   border: none;
-  padding: 12px 20px;
-  font-size: 1rem;
+  padding: 12px 40px;
+  font-size: 2.5rem;
   border-radius: 8px;
   cursor: pointer;
   transition: background 0.2s;
 }
 
-button:hover {
-  background-color: #1d4ed8;
+.btn-subir .material-icons {
+  font-size: 3rem;
+  vertical-align: middle;
+  margin-right: 10px;
+  color: white;
+}
+
+
+.btn-subir:hover {
+  background-color: #42453a;
+}
+
+.btn-ver {
+  background-color: #ffffff;
+  font-family: "DM Serif Text";
+  color: #787D68;
+  border: 4px solid #787D68;
+  padding: 12px 40px;
+  font-size: 2.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  box-sizing: border-box;
+  transition: background 0.2s;
+}
+
+.btn-ver .material-icons {
+  font-size: 3rem;
+  vertical-align: middle;
+  margin-right: 10px;
+  color: #787D68;
+}
+
+
+.btn-ver:hover {
+  background-color: #dedede;
 }
 
 
@@ -110,3 +229,4 @@ button:hover {
 #gallery img:hover {
   transform: scale(1.05);
 }
+
