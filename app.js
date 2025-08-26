@@ -1,9 +1,10 @@
-const SUPABASE_URL = "https://bfguzvyklcugedhwaqbg.supabase.co"
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJmZ3V6dnlrbGN1Z2VkaHdhcWJnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYxMjU5MzgsImV4cCI6MjA3MTcwMTkzOH0.FrArgmZvrtFitQYsIPkqbx15xub9J2qYL_ZisO8_kik"
-const BUCKET = "wedding-photos"
+const SUPABASE_URL = "https://bfguzvyklcugedhwaqbg.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJmZ3V6dnlrbGN1Z2VkaHdhcWJnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYxMjU5MzgsImV4cCI6MjA3MTcwMTkzOH0.FrArgmZvrtFitQYsIPkqbx15xub9J2qYL_ZisO8_kik";
+const BUCKET = "wedding-photos";
 
 const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+// --- Elementos ---
 const selectFilesBtn = document.getElementById("select-files-btn");
 const fileInput = document.getElementById("file-input");
 const popup = document.getElementById("popup");
@@ -11,16 +12,19 @@ const preview = document.getElementById("preview");
 const confirmUpload = document.getElementById("confirm-upload");
 const cancelUpload = document.getElementById("cancel-upload");
 const gallery = document.getElementById("gallery");
-const counterElement = document.querySelector(".txt-counter h2"); // 👈 contador
+const counterElement = document.querySelector(".txt-counter h2");
+const verAlbumBtn = document.querySelector(".btn-ver");
 
 let filesToUpload = [];
+let images = [];
+let currentLayout = 1;
+let currentView = "invitados"; // "invitados" o "boda"
 
-// Abrir selector de archivos al hacer clic en el botón
+// --- Funciones de subida ---
 selectFilesBtn.addEventListener("click", () => {
-  fileInput.click();
+  if(currentView === "invitados") fileInput.click();
 });
 
-// Previsualizar archivos seleccionados y mostrar pop-up
 fileInput.addEventListener("change", () => {
   if (fileInput.files.length > 0) {
     filesToUpload = Array.from(fileInput.files);
@@ -30,30 +34,54 @@ fileInput.addEventListener("change", () => {
   }
 });
 
-// Cancelar upload
-cancelUpload.addEventListener("click", () => {
-  closePopup();
-});
+cancelUpload.addEventListener("click", () => closePopup());
 
-// Cerrar pop-up al hacer clic fuera de la caja blanca
 popup.addEventListener("click", (e) => {
-  if (e.target === popup) {
-    closePopup();
-  }
+  if (e.target === popup) closePopup();
 });
 
-// Confirmar upload
+// --- Elementos de carga ---
+const loadingOverlay = document.createElement("div");
+loadingOverlay.id = "loading-overlay";
+loadingOverlay.innerHTML = `
+  <div class="spinner"></div>
+  <p>Subiendo fotos...</p>
+`;
+document.body.appendChild(loadingOverlay);
+
+// --- Confirmar subida ---
 confirmUpload.addEventListener("click", async () => {
+  if (currentView !== "invitados") return;
+
+  // Validar tamaño (5MB = 5 * 1024 * 1024)
   for (const file of filesToUpload) {
-    const filePath = `/${Date.now()}-${file.name}`;
-    const { error } = await client.storage.from(BUCKET).upload(filePath, file);
-    if (error) console.error(error.message);
+    if (file.size > 5 * 1024 * 1024) {
+      alert(`❌ El archivo "${file.name}" supera los 5MB y no puede subirse.`);
+      return;
+    }
   }
-  closePopup();
-  loadGallery();
+
+  // Mostrar overlay
+  loadingOverlay.classList.add("show");
+
+  try {
+    for (const file of filesToUpload) {
+      const filePath = `/invitados/${Date.now()}-${file.name}`;
+      const { error } = await client.storage.from(BUCKET).upload(filePath, file);
+      if (error) console.error(error.message);
+    }
+    closePopup();
+    await loadGallery();
+  } catch (err) {
+    console.error("Error subiendo archivos:", err);
+    alert("Ocurrió un error al subir las fotos. Intenta de nuevo.");
+  } finally {
+    // Ocultar overlay siempre
+    loadingOverlay.classList.remove("show");
+  }
 });
 
-// Función para cerrar pop-up y limpiar selección
+
 function closePopup() {
   filesToUpload = [];
   fileInput.value = "";
@@ -62,7 +90,6 @@ function closePopup() {
   preview.innerHTML = "";
 }
 
-// Mostrar previsualización con opción de eliminar
 function updatePreview() {
   preview.innerHTML = "";
   filesToUpload.forEach((file, index) => {
@@ -81,155 +108,141 @@ function updatePreview() {
   });
 }
 
-// Cargar galería de Supabase
-// ---- Layout ----
+// --- Layout ---
 const viewButtons = document.querySelectorAll(".visualizations-buttons button");
-let currentLayout = 1; // 👉 layout por defecto (2 columnas)
+viewButtons.forEach((btn, index) => {
+  btn.addEventListener("click", () => setLayout(index));
+});
 
 function setLayout(index) {
-  currentLayout = index; // 👈 recordar el layout actual
+  currentLayout = index;
   viewButtons.forEach(b => b.classList.remove("active"));
   viewButtons[index].classList.add("active");
 
-  if (index === 0) {
-    gallery.className = "gallery-1";
-    gallery.style.gridTemplateColumns = "1fr";
-    gallery.querySelectorAll("img").forEach(img => {
-      img.style.height = "900px";
-      img.classList.remove("show");
-      void img.offsetWidth;
-      img.classList.add("show");
-    });
-  } else if (index === 1) {
-    gallery.className = "gallery-2";
-    gallery.style.gridTemplateColumns = "1fr 1fr";
-    gallery.querySelectorAll("img").forEach(img => {
-      img.style.height = "500px";
-      img.classList.remove("show");
-      void img.offsetWidth;
-      img.classList.add("show");
-    });
-  } else if (index === 2) {
-    gallery.className = "gallery-3";
-    gallery.style.gridTemplateColumns = "1fr 1fr 1fr";
-    gallery.querySelectorAll("img").forEach(img => {
-      img.style.height = "500px";
-      img.classList.remove("show");
-      void img.offsetWidth;
-      img.classList.add("show");
-    });
-  }
+  if(index === 0) gallery.style.gridTemplateColumns = "1fr";
+  else if(index === 1) gallery.style.gridTemplateColumns = "1fr 1fr";
+  else gallery.style.gridTemplateColumns = "1fr 1fr 1fr";
+
+  gallery.querySelectorAll("img").forEach(img => {
+    img.style.height = (index === 0) ? "900px" : "500px";
+    img.classList.remove("show");
+    void img.offsetWidth;
+    img.classList.add("show");
+  });
 }
 
-// Cargar galería de Supabase
+// --- Cargar galería ---
 async function loadGallery() {
-  const { data, error } = await client.storage.from(BUCKET).list("", {
+  const folder = (currentView === "invitados") ? "invitados" : "boda";
+  const { data, error } = await client.storage.from(BUCKET).list(folder, {
     limit: 100,
     offset: 0,
     sortBy: { column: "created_at", order: "desc" }
   });
   if (error) return console.error(error.message);
 
-  counterElement.textContent = `Cantidad de fotos: ${data.length}`;
+  const validData = data.filter(item => item.name !== "emptyFolderPlaceholder" && item.name !== "background.jpg");
+
+  counterElement.textContent = `Cantidad de fotos: ${validData.length}`;
   gallery.innerHTML = "";
   images = [];
 
-  data.forEach((item, i) => {
-    const { data: urlData } = client.storage.from(BUCKET).getPublicUrl(item.name);
+  if(validData.length === 0) {
+    gallery.innerHTML = `<div class="empty-gallery" onclick="selectFilesBtn.click()">
+      <i class="material-icons">add</i> No hay fotos cargadas
+    </div>`;
+    return;
+  }
+
+  validData.forEach((item,i) => {
+    const { data: urlData } = client.storage.from(BUCKET).getPublicUrl(`${folder}/${item.name}`);
     const img = document.createElement("img");
     img.src = urlData.publicUrl;
     gallery.appendChild(img);
 
-    setTimeout(() => img.classList.add("show"), i * 100);
+    setTimeout(() => img.classList.add("show"), i*100);
 
-    // abrir lightbox al click
     img.addEventListener("click", () => openLightbox(i));
-
     images.push(img);
   });
 
   setLayout(currentLayout);
 }
 
-
-// eventos de clic en cada botón
-viewButtons.forEach((btn, index) => {
-  btn.addEventListener("click", () => setLayout(index));
-});
-
-// layout por defecto → 2 columnas
-loadGallery();
-setLayout(1);
-
-
-
 // --- Lightbox ---
-// --- Lightbox con animaciones ---
 const lightbox = document.getElementById("lightbox");
 const lightboxImg = document.getElementById("lightbox-img");
 const closeBtn = document.querySelector(".lightbox .close");
 const prevBtn = document.querySelector(".lightbox .prev");
 const nextBtn = document.querySelector(".lightbox .next");
-
 let currentIndex = 0;
-let images = []; // array con todas las imágenes visibles
 
 function openLightbox(index) {
   currentIndex = index;
   lightbox.classList.remove("hidden");
-  setTimeout(() => lightbox.classList.add("show"), 10); // animación fade + scale
-  showImage(currentIndex, false);
+  setTimeout(() => lightbox.classList.add("show"), 10);
+  showImage(currentIndex,false);
 }
 
 function closeLightbox() {
   lightbox.classList.remove("show");
   lightboxImg.classList.remove("visible");
-  setTimeout(() => lightbox.classList.add("hidden"), 400); // esperar transición
+  setTimeout(()=>lightbox.classList.add("hidden"),400);
 }
 
-// mostrar imagen con animación de deslizamiento
-function showImage(index, direction = null) {
+function showImage(index,direction=null){
   const newSrc = images[index].src;
-
-  // animación de slide lateral
-  const offset = direction === "next" ? 50 : direction === "prev" ? -50 : 0;
+  const offset = direction==="next"?50:direction==="prev"?-50:0;
   lightboxImg.style.transform = `translate(${offset}%, -50%)`;
   lightboxImg.style.opacity = 0;
-
-  setTimeout(() => {
-    lightboxImg.src = newSrc;
-    lightboxImg.style.transition = "none";
-    lightboxImg.style.transform = `translate(${offset * -1}%, -50%)`; // posición opuesta
-    setTimeout(() => {
-      lightboxImg.style.transition = "transform 0.5s ease, opacity 0.5s ease";
-      lightboxImg.style.transform = "translate(-50%, -50%)";
-      lightboxImg.style.opacity = 1;
+  setTimeout(()=>{
+    lightboxImg.src=newSrc;
+    lightboxImg.style.transition="none";
+    lightboxImg.style.transform = `translate(${offset*-1}%, -50%)`;
+    setTimeout(()=>{
+      lightboxImg.style.transition="transform 0.5s ease, opacity 0.5s ease";
+      lightboxImg.style.transform = "translate(-50%,-50%)";
+      lightboxImg.style.opacity=1;
       lightboxImg.classList.add("visible");
-    }, 50);
-  }, 200);
+    },50);
+  },200);
 }
 
-function showPrev() {
-  currentIndex = (currentIndex - 1 + images.length) % images.length;
-  showImage(currentIndex, "prev");
-}
+function showPrev(){ currentIndex=(currentIndex-1+images.length)%images.length; showImage(currentIndex,"prev"); }
+function showNext(){ currentIndex=(currentIndex+1)%images.length; showImage(currentIndex,"next"); }
 
-function showNext() {
-  currentIndex = (currentIndex + 1) % images.length;
-  showImage(currentIndex, "next");
-}
-
-// eventos botones
 closeBtn.addEventListener("click", closeLightbox);
 prevBtn.addEventListener("click", showPrev);
 nextBtn.addEventListener("click", showNext);
-
-// soporte teclado
-document.addEventListener("keydown", (e) => {
-  if (lightbox.classList.contains("hidden")) return;
-  if (e.key === "ArrowLeft") showPrev();
-  if (e.key === "ArrowRight") showNext();
-  if (e.key === "Escape") closeLightbox();
+document.addEventListener("keydown",(e)=>{
+  if(lightbox.classList.contains("hidden")) return;
+  if(e.key==="ArrowLeft") showPrev();
+  if(e.key==="ArrowRight") showNext();
+  if(e.key==="Escape") closeLightbox();
 });
 
-// actualizar loadGallery
+// --- Ver álbum / volver ---
+verAlbumBtn.addEventListener("click", ()=> {
+  if(currentView==="invitados"){
+    currentView="boda";
+    document.querySelector(".hero").style.display="none"; // ocultar fondo
+    selectFilesBtn.style.display="none"; // no subir fotos en boda
+    verAlbumBtn.innerHTML='<i class="material-icons">arrow_back</i> Volver';
+  } else {
+    currentView="invitados";
+    document.querySelector(".hero").style.display="block";
+    selectFilesBtn.style.display="inline-flex";
+    verAlbumBtn.innerHTML='<i class="material-icons">swipe_up</i> Ver Álbum';
+  }
+  loadGallery();
+});
+
+// --- Inicial ---
+loadGallery();
+setLayout(currentLayout);
+
+
+
+
+
+

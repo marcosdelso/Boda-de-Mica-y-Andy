@@ -427,3 +427,47 @@ h2 {
   transform: scale(1.1);
   color: #42453a;
 }
+
+
+
+
+#loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255,255,255,0.9);
+  z-index: 200;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: "DM Serif Text";
+  color: #42453a;
+  font-size: 1.5rem;
+}
+
+#loading-overlay.show {
+  display: flex;
+  animation: fadeIn 0.3s ease;
+}
+
+#loading-overlay .spinner {
+  width: 70px;
+  height: 70px;
+  border: 6px solid #ccc;
+  border-top: 6px solid #787D68;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
