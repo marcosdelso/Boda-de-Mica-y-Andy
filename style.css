@@ -1,24 +1,26 @@
 body {
     font-family: "DM Serif Text", 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: #ebe6e1;
+  background: #ffffff;
   margin: 0;
   padding: 0;
 }
 .hidden { display: none; }
 
 .popup {
-  display: none; /* oculto por defecto */
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   background: rgba(0,0,0,0.6);
-  display: flex;
   align-items: center;
   justify-content: center;
   z-index: 50;
+  display: none; /* oculto por defecto */
 }
+
+.popup.show { display: flex; } /* se agrega al abrir */
+
 
 
 .popup-content {
@@ -28,6 +30,79 @@ body {
   max-width: 90%;
   width: 600px;
   text-align: center;
+}
+
+.loading {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+    margin: 20px 0
+}
+
+.visualizations {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    text-align: center;
+    padding: 3rem 0 0 0;
+}
+
+.visualizations .txt-counter h2 {
+    font-family: "Sans Serif", 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #a9a9a9;
+    font-size: 2rem;
+}
+
+.visualizations-buttons {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    align-items: center;
+    justify-content: right;
+    gap: 1rem;
+    margin: 20px 0;
+
+}
+
+.visualizations-buttons button {
+  background-color: #ffffff;
+  color: #787D68;
+  border: none;
+  padding: 5px 5px;
+  font-size: 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  
+}
+
+.visualizations-buttons button:first-child .material-icons {
+}
+
+.visualizations-buttons button:nth-child(2) .material-icons {
+}
+
+
+.visualizations-buttons button:last-child .material-icons {
+}
+
+
+
+.visualizations-buttons .material-icons {
+  font-size: 3rem;
+  vertical-align: middle;
+  transition: color 0.2s;
+}
+
+.visualizations button.active {
+  background-color: #42453a;
+  border-color: #42453a;
+}
+
+.visualizations button.active .material-icons {
+  color: #ffffff;
 }
 
 .preview {
@@ -94,17 +169,17 @@ body {
   height: 100%;
   background: linear-gradient(
     to bottom,
-    rgba(235, 230, 225, 0) 0%,      /* totalmente transparente al inicio */
-    rgba(235, 230, 225, 0.3) 30%,   /* a la mitad, apenas oscuro */
-    rgba(235, 230, 225, 0.7) 70%,   /* más oscuro */
-    rgb(235, 230, 225) 100%     /* completamente negro al final */
+    rgba(255, 255, 255, 0) 0%,      /* totalmente transparente al inicio */
+    rgba(255, 255, 255, 0.3) 30%,   /* a la mitad, apenas oscuro */
+    rgba(255, 255, 255, 0.7) 70%,   /* más oscuro */
+    rgb(255, 255, 255) 100%     /* completamente negro al final */
   );
 }
 
 .hero h1 {
     color: #652e22;
-    font-family: "Playwrite CA", cursive, "Roboto";
-    font-size: 4rem;
+    font-family: "Satisfy", "Playwrite CA", cursive, "Roboto";
+    font-size: 5rem;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -119,7 +194,6 @@ section {
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 100vh;
 }
 
 .container {
@@ -167,7 +241,7 @@ h2 {
   border: none;
   padding: 12px 40px;
   font-size: 2.5rem;
-  border-radius: 8px;
+  border-radius: 50px;
   cursor: pointer;
   transition: background 0.2s;
 }
@@ -184,16 +258,18 @@ h2 {
   background-color: #42453a;
 }
 
+
 .btn-ver {
   background-color: #ffffff;
   font-family: "DM Serif Text";
   color: #787D68;
-  border: 4px solid #787D68;
-  padding: 12px 40px;
+  border: none;
+  padding: 15px 40px;
   font-size: 2.5rem;
-  border-radius: 8px;
+  border-radius: 50px;
   cursor: pointer;
   box-sizing: border-box;
+  box-shadow: inset 0 0 0 5px #787D68;
   transition: background 0.2s;
 }
 
@@ -213,8 +289,20 @@ h2 {
 #gallery {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 25px;
+  gap: 2rem;
   margin-top: 20px;
+  justify-items: center;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 #gallery img {
@@ -224,9 +312,118 @@ h2 {
   border-radius: 25px;
   box-shadow: 0 4px 8px rgba(0,0,0,0.15);
   transition: transform 0.2s ease-in-out;
+  opacity: 0; /* oculto inicialmente */
 }
+
+#gallery img.show {
+  animation: fadeUp 0.6s ease forwards;
+}
+
 
 #gallery img:hover {
   transform: scale(1.05);
 }
 
+/* ---- Lightbox ---- */
+/* ---- Lightbox con animaciones ---- */
+.lightbox {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  flex-direction: column;
+  opacity: 0;
+  transform: scale(0.95);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.lightbox.show {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.lightbox.hidden {
+  display: none; /* se mantiene oculto fuera del DOM visual */
+}
+
+.lightbox img {
+  max-width: 90%;
+  max-height: 80%;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  transition: transform 0.5s ease, opacity 0.5s ease;
+  opacity: 0;
+}
+
+.lightbox img.visible {
+  opacity: 1;
+}
+
+.lightbox .close {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  font-size: 3rem;
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+  transition: color 0.2s;
+}
+
+.lightbox .close:hover {
+  color: #bbb;
+}
+
+.lightbox .nav {
+  position: absolute;
+  top: 50%;
+  font-size: 3rem;
+  color: white;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transform: translateY(-50%);
+  padding: 10px;
+  user-select: none;
+  transition: color 0.2s;
+}
+
+.lightbox .nav:hover {
+  color: #bbb;
+}
+
+.lightbox .nav.prev { left: 30px; }
+.lightbox .nav.next { right: 30px; }
+
+
+.empty-gallery {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #787D68;
+  font-size: 1.5rem;
+  gap: 10px;
+  height: 300px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.empty-gallery i {
+  font-size: 4rem;
+}
+
+.empty-gallery:hover {
+  transform: scale(1.1);
+  color: #42453a;
+}

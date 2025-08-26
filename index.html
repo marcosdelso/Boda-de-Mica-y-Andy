@@ -6,8 +6,8 @@
   <link rel="stylesheet" href="style.css">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Text:ital@0;1&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Playwrite+CA:wght@100..400&display=swap');
-  </style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Text:ital@0;1&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Playwrite+CA:wght@100..400&family=Roboto:ital,wght@0,100..900;1,100..900&family=Satisfy&display=swap');
+</style>
   <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script defer src="app.js"></script>
 </head>
@@ -19,7 +19,7 @@
   <section>
     <div class="container">
 
-      <div id="loading">
+      <div class="loading">
         <button id="select-files-btn" class="btn-subir">
           <i class="material-icons">upload</i> Subir foto(s)
         </button>
@@ -40,9 +40,34 @@
 
       <input type="file" id="file-input" accept="image/*" multiple class="hidden">
 
-      <h2>19 fotos</h2>
+      <div class="visualizations">
+        <div class="txt-counter">
+            <h2>Cantidad de fotos: 0</h2>
+        </div>
+        <div class="visualizations-buttons">
+            <button>
+                    <i class="material-icons">more_vert</i>
+                    </button>
+                    <button>
+                    <i class="material-icons">drag_indicator</i>
+                    </button>
+                    <button>
+                    <i class="material-icons">apps</i>
+                    </button>
+        </div>
+        
+      </div>
+      
       <div id="gallery"></div>
     </div>
   </section>
+  <!-- Pop-up de visor de imágenes -->
+<div id="lightbox" class="lightbox hidden">
+  <span class="close">&times;</span>
+  <img id="lightbox-img" src="" alt="Foto en grande">
+  <button class="nav prev">&#10094;</button>
+  <button class="nav next">&#10095;</button>
+</div>
+
 </body>
 </html>
